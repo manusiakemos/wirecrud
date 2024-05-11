@@ -31,16 +31,16 @@ class WirecrudServiceProvider extends ServiceProvider
             // Publish your stub file to the user's application if needed
             $this->publishes([
                 __DIR__.'/Console/stubs' => base_path('stubs/vendor/manusiakemos/wirecrud'),
-            ], 'wirecrud-stubs');
+            ], 'wirecrud:stubs');
 
-            $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('wirecrud.php'),
-            ], 'config');
+//            $this->publishes([
+//                __DIR__.'/../config/config.php' => config_path('wirecrud.php'),
+//            ], 'config');
 
             // Publishing the views.
             $this->publishes([
                 __DIR__.'/../resources/views' => resource_path('views/vendor/wirecrud'),
-            ], 'views');
+            ], 'wirecrud:views');
 
             // Publishing assets.
             /*$this->publishes([
