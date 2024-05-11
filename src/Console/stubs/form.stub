@@ -1,0 +1,37 @@
+<x-slot name="htmlTitle">
+    <title>{@className}</title>
+</x-slot>
+
+<main class="w-full flex-grow px-3">
+    <section class="content overflow-x-auto rounded-lg overflow-y-auto h-full mx-auto py-5 px-5">
+        <div class="pb-3">
+            <x-atoms.custom-breadcrumb>
+                <x-atoms.breadcrumb-item label="Home" href="#"/>
+                <x-atoms.breadcrumb-item label="{@classNameSpace}" active/>
+            </x-atoms.custom-breadcrumb>
+        </div>
+        <div class="mb-3">
+            <div class="mb-5 flex flex-grow flex-col md:flex-row items-center justify-center md:justify-between">
+                <x-atoms.heading label="{{$updateMode ? __('messages.edit') : __('messages.add')}} {@className}"/>
+            </div>
+            <div id="main-content">
+                <x-card>
+                <form action="#" wire:submit.prevent="save" class="p-3">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {@forms}
+                    </div>
+                    <div class="flex place-content-end py-4 gap-1">
+                        <x-button secondary wire:click="back">
+                            Kembali
+                        </x-button>
+                        <x-button primary>
+                            {{$updateMode ? __('messages.save_changes') : __('messages.save')}} {@className}
+                        </x-button>
+                    </div>
+                </form>
+                </x-card>
+            </div>
+        </div>
+    </section>
+</main>
+

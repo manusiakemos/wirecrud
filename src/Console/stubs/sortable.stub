@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Livewire\{@className};
+
+use App\Services\{@className}\{@className}Service;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class {@className}Sortable extends Component
+{
+    protected {@className}Service ${@classNameLower}Service;
+
+    public function boot({@className}Service ${@classNameLower}Service): void
+    {
+        $this->{@classNameLower}Service = ${@classNameLower}Service;
+    }
+
+    public function updateOrder($items): void
+    {
+        foreach ($items as $item) {
+            $this->{@classNameLower}Service->update($item['value'], ['order' => $item['order']]);
+        }
+    }
+
+    public function render(): View
+    {
+        return view('livewire.{@classNameLower}.{@classNameLower}-sortable', [
+            '{@classNameLower}s' => $this->{@classNameLower}Service->getAll{@className}()
+        ]);
+    }
+}

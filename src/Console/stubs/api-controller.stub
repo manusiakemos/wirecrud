@@ -1,0 +1,68 @@
+<?php
+
+namespace App\Http\Controllers\Api\V1;
+
+use App\Http\Controllers\Controller;
+use App\Services\{@className}\{@className}Service;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+/**
+*@group {@className}
+*/
+
+class {@className}ApiController extends Controller
+{
+
+    protected {@className}Service ${@classNameLower}Service;
+
+    public function __construct({@className}Service ${@classNameLower}Service)
+    {
+        $this->{@classNameLower}Service = ${@classNameLower}Service;
+    }
+    /**
+    * List {@className}
+    */
+    public function index()
+    {
+        $data = $this->{@classNameLower}Service->all();
+        return responseJson('data {@classNameLower}', $data);
+    }
+
+    /**
+    * Insert {@className}
+    */
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate({@validate});
+        $data = $this->{@classNameLower}Service->create($validatedData);
+        return responseJson('add {@className}', $data);
+    }
+
+    /**
+    *Show {@className}
+    */
+    public function show($id)
+    {
+       $data = $this->{@classNameLower}Service->find($id);
+       return responseJson('show {@className}', $data);
+    }
+
+    /**
+    *Update {@className}
+    */
+    public function update(Request $request, $id)
+    {
+        $validatedData = $request->validate({@validate});
+        $data = $this->{@classNameLower}Service->update($id, $validatedData);
+        return responseJson('update {@className}', $data);
+    }
+    /**
+    *Delete {@className}
+    */
+    public function destroy($id)
+    {
+        $data = $this->{@classNameLower}Service->delete($id);
+        return responseJson('delete {@classNameLower}', $data);
+    }
+}

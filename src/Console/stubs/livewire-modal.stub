@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Livewire\{@className};
+
+use Livewire\Component;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use App\Services\{@className}\{@className}Service;
+use WireUi\Traits\Actions;
+{@useTraitFile}
+
+class {@className}Page extends Component
+{
+    {@traitFile}
+    
+    protected $listeners = ['create', 'edit'];
+    protected {@className}Service ${@classNameLower}Service;
+
+    public mixed $myFile = null;
+
+    use Actions;
+    public bool $updateMode = false;
+    public array ${@classNameLower} = {@generatedProps};
+    public bool $showModalForm = false;
+    {@options}
+
+    public function boot({@className}Service ${@classNameLower}Service): void
+    {
+        $this->{@classNameLower}Service = ${@classNameLower}Service;
+    }
+
+    public function mount(): void
+    {
+        session()->put('active', '{@classNameSlug}');
+        session()->put('expanded', 'admin');
+    }
+
+    public function render(): Factory|View|Application
+    {
+        return view('livewire.{@classNameSlug}.{@classNameSlug}-page');
+    }
+
+    public function setOptions()
+    {
+
+    }
+
+     public function save(): void
+     {
+         $this->updateMode ? $this->update() : $this->store();
+     }
+
+     public function hydrate(): void
+     {
+         $this->resetErrorBag();
+         $this->resetValidation();
+     }
+
+    public function create(): void
+    {
+        $this->reset(['{@classNameLower}', 'updateMode', 'myFile']);
+        $this->setOptions();
+        $this->showModalForm = true;
+    }
+
+    public function store(): void
+    {
+        $data = $this->validate(
+            {@validate}
+        );
+        $this->updateMode = false;
+        {@storeUpload}
+        $this->{@classNameLower}Service->create($data['{@classNameLower}']);
+        $this->reset(['{@classNameLower}', 'showModalForm']);
+        $this->notification()->send([
+            'title' => '{@classNameSpace} berhasil ditambahkan',
+            'icon'  => 'success'
+        ]);
+        $this->dispatch('refreshDt');
+    }
+
+    public function edit($id): void
+    {
+        $this->reset(['{@classNameLower}', 'showModalForm','myFile']);
+        $this->updateMode = true;
+        $this->setOptions();
+        $this->{@classNameLower} =  $this->{@classNameLower}Service->find($id)->toArray();
+        $this->showModalForm = true;
+    }
+
+    public function update(): void
+    {
+        $this->updateMode = true;
+        $data = $this->validate(
+            {@validate}
+        );
+        {@updateUpload}
+        if ($this->{@classNameLower}['{@primaryKey}'] && $this->updateMode) {
+            $this->{@classNameLower}Service->update($this->{@classNameLower}['{@primaryKey}'],$data['{@classNameLower}']);
+           } else {
+             abort('403', '{@className} Not Found');
+        }
+        $this->reset(['{@classNameLower}', 'showModalForm']);
+        $this->notification()->send([
+          'title' => '{@classNameSpace} berhasil diupdate',
+          'icon'  => 'success'
+        ]);
+        $this->dispatch('refreshDt');
+    }
+
+    public function destroy($id): void
+    {
+         $data = $this->{@classNameLower}Service->find($id);
+         {@deleteUpload}
+         $data->delete();
+         $this->notification()->send([
+           'title' => '{@classNameSpace} berhasil dihapus',
+           'icon'        => 'success'
+        ]);
+
+        $this->dispatch('refreshDt', false);
+        $this->reset(['{@classNameLower}', 'updateMode']);
+    }
+}

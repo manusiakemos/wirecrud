@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Livewire\{@className};
+
+use App\Models\{@className};
+use Illuminate\Database\Eloquent\Builder;
+use Rappasoft\LaravelLivewireTables\DataTableComponent;
+use Rappasoft\LaravelLivewireTables\Views\Column;
+use Rappasoft\LaravelLivewireTables\Views\Columns\BooleanColumn;
+
+class {@className}Table extends DataTableComponent
+{
+    public function configure(): void
+    {
+            $this->setPrimaryKey("{@primaryKey}")
+            ->setUseHeaderAsFooterEnabled()
+            ->setPerPageAccepted([10, 25, 50])
+            ->setThAttributes(function (Column $column) {
+                if ($column->getTitle() == 'Action') {
+                    return [
+                        'default' => true,
+                        'class' => 'text-center',
+                    ];
+                }
+                return ['default' => true];
+            });
+    }
+
+    public function columns(): array
+    {
+        return [
+            {@columns}
+            Column::make("Action", "{@primaryKey}")
+                ->html()
+                ->format(function ($value, {@className} $row) {
+                    return view('livewire.{@classNameSlug}._{@classNameSlug}-action', compact('row'));
+                }),
+        ];
+    }
+
+    public function builder(): Builder
+    {
+       return {@className}::query()->select(["*"]);
+    }
+}

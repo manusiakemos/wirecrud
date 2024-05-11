@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Services\@{className};
+
+use LaravelEasyRepository\BaseService;
+
+interface @{className}Service extends BaseService{
+
+    // Write something awesome :)
+}

@@ -1,0 +1,9 @@
+<?php
+
+namespace App\Repositories\@{className};
+use LaravelEasyRepository\Repository;
+
+interface @{className}Repository extends Repository
+{
+
+}

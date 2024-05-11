@@ -1,0 +1,60 @@
+{
+    "name": "manusiakemos/wirecrud",
+    "version": "1.0.0",
+    "description": "Laravel Livewire Crud Generator Package",
+    "keywords": [
+        "manusiakemos",
+        "wirecrud"
+    ],
+    "homepage": "https://github.com/manusiakemos/wirecrud",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Hafiz Nugraha",
+            "email": "manusiakemos@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.1",
+        "laravel/framework": "^10.0",
+        "livewire/livewire": "^3.0",
+        "yaza/laravel-repository-service": "^4.0",
+        "rappasoft/laravel-livewire-tables": "^3.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^8.0",
+        "phpunit/phpunit": "^9.0",
+        "barryvdh/laravel-ide-helper": "^2.10",
+        "knuckleswtf/scribe": "^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Manusiakemos\\Wirecrud\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Manusiakemos\\Wirecrud\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Manusiakemos\\Wirecrud\\WirecrudServiceProvider"
+            ],
+            "aliases": {
+                "Wirecrud": "Manusiakemos\\Wirecrud\\WirecrudFacade"
+            }
+        }
+    }
+}

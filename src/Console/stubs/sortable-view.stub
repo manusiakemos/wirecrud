@@ -1,0 +1,17 @@
+<ul class="grid grid-cols-1 gap-4" wire:sortable="updateOrder">
+    @foreach(${@classNameLower}s as $item)
+        <li wire:sortable.item="{{ $item->{@primaryKey} }}" wire:key="task-{{ $item->{@primaryKey} }}">
+            <x-atoms.card>
+                <div class="flex justify-between">
+                    <div class="flex grow gap-4">
+                        <x-icon class="h-6 text-gray-500" name="cursor-click"/>
+                        {{$item->title}}
+                    </div>
+                    <div>
+                        @include('livewire.{@classNameLower}._{@classNameLower}-action',['row'=>$item])
+                    </div>
+                </div>
+            </x-atoms.card>
+        </li>
+    @endforeach
+</ul>

@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Services\@{className};
+
+use LaravelEasyRepository\Service;
+use App\Repositories\@{className}\@{className}Repository;
+
+class @{className}ServiceImplement extends Service implements @{className}Service{
+
+     /**
+     * don't change $this->mainRepository variable name
+     * because used in extends service class
+     */
+     protected $mainRepository;
+
+    public function __construct(@{className}Repository $mainRepository)
+    {
+      $this->mainRepository = $mainRepository;
+    }
+
+    // Define your custom methods :)
+}

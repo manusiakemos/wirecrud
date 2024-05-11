@@ -1,0 +1,23 @@
+<?php
+
+namespace App\Repositories\@{className};
+
+use App\Models\@{className};
+use Illuminate\Support\Str;
+use LaravelEasyRepository\Implementations\Eloquent;
+
+class @{className}RepositoryImplement extends Eloquent implements @{className}Repository
+{
+     /**
+         * Model class to be used in this repository for the common methods inside Eloquent
+         * Don't remove or change $this->model variable name
+         *
+         * @property @{className}|mixed $model;
+         */
+        protected @{className} $model;
+    
+        public function __construct(@{className} $model)
+        {
+            $this->model = $model;
+        }
+}

@@ -1,0 +1,9 @@
+@if(\Illuminate\Support\Facades\Route::has('{@classNameSlug}'))
+    <x-atoms.navigation-item session-active="{@classNameSlug}" link="{{ route('{@classNameSlug}') }}">
+        <x-slot name="icon">
+            <x-atoms.icon d=""/>
+        </x-slot>
+        {@classNameSpace}
+    </x-atoms.navigation-item>
+@endif
+
