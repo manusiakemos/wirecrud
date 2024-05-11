@@ -1,6 +1,5 @@
 {
     "name": "manusiakemos/wirecrud",
-    "version": "1.0.0",
     "description": "Laravel Livewire Crud Generator Package",
     "keywords": [
         "manusiakemos",
