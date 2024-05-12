@@ -1,17 +1,14 @@
-<x-modal.card max-width="4xl" blur wire:model.defer="showModalForm" align="start">
+<x-modal.card blur wire:model.defer="showModalForm" align="start">
     <form action="#" wire:submit.prevent="save" class="relative flex flex-col gap-4">
 
-        <div class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {@forms}
         </div>
 
         <div class="md:flex place-content-end py-4 gap-1">
-            <x-button secondary x-on:click="show = false">
-                {{ __('messages.close') }}
-            </x-button>
-            <x-button spinner="save" loading-delay="short" type="submit" primary>
-                {{ $updateMode ? __('messages.save_changes') : __('messages.save') }}
-            </x-button>
+            <x-button secondary x-on:click="show = false" label="Tutup"/>
+            <x-button spinner="save" loading-delay="short" type="submit" primary
+                label=" {{ $updateMode ? __('messages.save_changes') : __('messages.save') }}"/>
         </div>
     </form>
 </x-modal.card>

@@ -39,12 +39,12 @@ class WireCrudConsole extends Command
 
     protected function getStub($filename): string
     {
-        $path = base_path('stubs/vendor/manusiakemos/wirecrud/'.$filename);
+        $path = base_path('stubs/vendor/manusiakemos/wirecrud/' . $filename);
         if (File::exists($path)) {
             return $path;
         }
 
-        return __DIR__.'/stubs/'.$filename;
+        return __DIR__ . '/stubs/' . $filename;
     }
 
     public function handle(): bool
@@ -63,12 +63,36 @@ class WireCrudConsole extends Command
             options: ['modal', 'page'],
             default: 'modal'
         );
+        $generateModel = select(
+            label: 'Generate Api',
+            options: ['yes', 'no'],
+            default: config('wirecrud.model') ? 'yes' : 'no'
+        );
+        $generateLivewire = select(
+            label: 'Generate Livewire',
+            options: ['yes', 'no'],
+            default: config('wirecrud.livewire') ? 'yes' : 'no'
+        );
+        $generateRepository = select(
+            label: 'Generate Repository',
+            options: ['yes', 'no'],
+            default: config('wirecrud.repository') ? 'yes' : 'no'
+        );
+        $generateService = select(
+            label: 'Generate Service',
+            options: ['yes', 'no'],
+            default: config('wirecrud.service') ? 'yes' : 'no'
+        );
+        $generateView = select(
+            label: 'Generate View',
+            options: ['yes', 'no'],
+            default: config('wirecrud.view') ? 'yes' : 'no'
+        );
         $generateApi = select(
             label: 'Generate Api',
             options: ['yes', 'no'],
-            default: 'yes'
+            default: config('wirecrud.api') ? 'yes' : 'no'
         );
-
         $generateSortable = select(
             label: 'Generate Sortable',
             options: ['yes', 'no'],
@@ -82,13 +106,13 @@ class WireCrudConsole extends Command
             $keyType = false;
             if (Str::contains(haystack: $column, needles: '_id') || Str::contains(haystack: $column, needles: '_by')) {
                 $keyType = select(
-                    label: 'choose '.$column.' key type',
+                    label: 'choose ' . $column . ' key type',
                     options: ['primary', 'foreign', 'false'],
                     default: 'primary'
                 );
                 if ($keyType == 'foreign') {
                     $type = 'select';
-                    $labelColumn = text(label: $column.' label column for select component', default: 'name', required: true);
+                    $labelColumn = text(label: $column . ' label column for select component', default: 'name', required: true);
                 } elseif ($keyType == 'primary') {
                     $type = 'invisible';
                 }
@@ -96,7 +120,7 @@ class WireCrudConsole extends Command
             $isUpload = 'no';
             if (Str::contains(haystack: $column, needles: 'image') || Str::contains(haystack: $column, needles: 'file')) {
                 $isUpload = select(
-                    label: 'Is '.$column.' a file upload',
+                    label: 'Is ' . $column . ' a file upload',
                     options: ['yes', 'no'],
                     default: 'yes'
                 );
@@ -106,7 +130,7 @@ class WireCrudConsole extends Command
                 }
             }
 
-            if (! Str::contains(haystack: $column, needles: '_at')) {
+            if (!Str::contains(haystack: $column, needles: '_at')) {
                 if (Str::contains(haystack: $column, needles: '_id') && $keyType == 'foreign') {
                     $label = Str::replace(search: '_id', replace: '', subject: $column);
                 } else {
@@ -136,12 +160,23 @@ class WireCrudConsole extends Command
 
         $this->setPrimaryKey();
 
-        $this->generateModel();
-        $this->generateRepository();
-        $this->generateService();
-        $this->generateRepository();
-        $this->generateLivewire();
-        $this->generateView();
+        if ($generateModel == 'yes') {
+            $this->generateModel();
+        }
+
+        if ($generateService == 'yes') {
+            $this->generateService();
+            $this->generateRepository();
+        }
+        if ($generateRepository == 'yes' && $generateService == 'no') {
+            $this->generateRepository();
+        }
+        if ($generateLivewire) {
+            $this->generateLivewire();
+        }
+        if ($generateView) {
+            $this->generateView();
+        }
         $this->generateSeeder();
         $this->generateFactory();
         if ($generateApi == 'yes') {
@@ -206,7 +241,7 @@ class WireCrudConsole extends Command
         $stub_template = file_get_contents($this->getStub('repository.stub'));
         $modelTemplate = str_replace($stubTemplate, $stubReplaceTemplate, $stub_template);
 
-        $path = app_path('/Repositories/'.$this->className);
+        $path = app_path('/Repositories/' . $this->className);
         File::isDirectory($path) or File::makeDirectory($path, 0755, true, true);
 
         file_put_contents(app_path("Repositories/$this->className/{$this->className}Repository.php"), $modelTemplate);
@@ -238,7 +273,7 @@ class WireCrudConsole extends Command
         $stub_template = file_get_contents($this->getStub('service.stub'));
         $modelTemplate = str_replace($stubTemplate, $stubReplaceTemplate, $stub_template);
 
-        $path = app_path('/Services/'.$this->className);
+        $path = app_path('/Services/' . $this->className);
         File::isDirectory($path) or File::makeDirectory($path, 0755, true, true);
 
         file_put_contents(app_path("Services/$this->className/{$this->className}Service.php"), $modelTemplate);
@@ -355,7 +390,7 @@ class WireCrudConsole extends Command
         $path = app_path("/Livewire/$this->className");
         File::isDirectory($path) or File::makeDirectory($path, 0775, true, true);
         file_put_contents(app_path("/Livewire/$this->className/{$this->className}Page.php"), $template);
-        if (! $this->isModal) {
+        if (!$this->isModal) {
             $templateFile = file_get_contents($this->getStub('livewire-form.stub'));
             $template = str_replace($stubTemplate, $stubReplaceTemplate, $templateFile);
             file_put_contents(app_path("/Livewire/$this->className/{$this->className}FormPage.php"), $template);
