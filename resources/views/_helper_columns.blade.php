@@ -1,10 +1,13 @@
 @foreach($fields as $column)
+@php
+$labelnya = Str::replace('_', ' ', $column['label']);
+@endphp
 @if($column['type'] == 'boolean')
-    BooleanColumn::make('{{$column['label']}}', '{{$column['column']}}')
+    BooleanColumn::make('{{$labelnya}}', '{{$column['column']}}')
     ->searchable()
     ->sortable(),
 @else
-    Column::make('{{$column['label']}}', '{{$column['column']}}')
+    Column::make('{{$labelnya}}', '{{$column['column']}}')
     ->searchable()
     ->sortable(),
 @endif

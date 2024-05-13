@@ -134,7 +134,7 @@ class WireCrudConsole extends Command
                 if (Str::contains(haystack: $column, needles: 'id') || Str::contains(haystack: $column, needles: '_by') && $keyType == 'foreign') {
                     $label = Str::replace(search: 'id', replace: '', subject: $column);
                 } else {
-                    $label = Str::title(Str::snake($column, ' '));
+                    $label = Str::replace('_', ' ',Str::snake($column, ' '));
                 }
 
                 $fields->push([
@@ -153,7 +153,7 @@ class WireCrudConsole extends Command
         $this->className = $className;
         $this->classNameLower = strtolower(Str::camel($className));
         $this->classNameSlug = strtolower(Str::slug(Str::snake($className, '-')));
-        $this->classNameSpace = Str::title(Str::snake($className, ' '));
+        $this->classNameSpace = Str::replace('_', ' ', Str::title($className));
         $this->table = $tableName;
         $this->isModal = $pageType == 'modal';
         $this->hasUpload = $hasUpload;
