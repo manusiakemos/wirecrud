@@ -1,4 +1,4 @@
 <div class="flex justify-center items-center gap-1">
-    <x-button.circle primary icon="pencil" wire:click="$parent.edit({ id : {{$row->{@primaryKey}}} })"/>
+    <x-button.circle primary icon="pencil" wire:click="$parent.edit('{{$row->{@primaryKey}}}')"/>
     <x-button.circle negative icon="trash" wire:click="$dispatchTo('{@classNameSlug}.{@classNameSlug}-page','confirmDestroy',{ id : {{$row->{@primaryKey}}} })"/>
 </div>
