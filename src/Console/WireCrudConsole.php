@@ -64,7 +64,7 @@ class WireCrudConsole extends Command
             default: 'modal'
         );
         $generateModel = select(
-            label: 'Generate Api',
+            label: 'Generate Model',
             options: ['yes', 'no'],
             default: config('wirecrud.model') ? 'yes' : 'no'
         );
