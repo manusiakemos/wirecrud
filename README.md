@@ -16,8 +16,8 @@ composer require manusiakemos/wirecrud
 
 ## Usage
 
-```php
-// Usage description here
+```bash
+php artisan wirecrud:make
 ```
 
 ### Testing

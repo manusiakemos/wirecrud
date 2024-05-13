@@ -104,7 +104,7 @@ class WireCrudConsole extends Command
             $labelColumn = false;
             $type = Schema::getColumnType($tableName, $column);
             $keyType = false;
-            if (Str::contains(haystack: $column, needles: '_id') || Str::contains(haystack: $column, needles: '_by')) {
+            if (Str::contains(haystack: $column, needles: 'id')) {
                 $keyType = select(
                     label: 'choose ' . $column . ' key type',
                     options: ['primary', 'foreign', 'false'],
@@ -131,8 +131,8 @@ class WireCrudConsole extends Command
             }
 
             if (!Str::contains(haystack: $column, needles: '_at')) {
-                if (Str::contains(haystack: $column, needles: '_id') && $keyType == 'foreign') {
-                    $label = Str::replace(search: '_id', replace: '', subject: $column);
+                if (Str::contains(haystack: $column, needles: 'id') || Str::contains(haystack: $column, needles: '_by') && $keyType == 'foreign') {
+                    $label = Str::replace(search: 'id', replace: '', subject: $column);
                 } else {
                     $label = Str::title(Str::snake($column, ' '));
                 }
