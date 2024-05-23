@@ -10,4 +10,5 @@ return [
     'service' => true,
     'view' => true,
     'api' => true,
+    'uuid' => true,
 ];

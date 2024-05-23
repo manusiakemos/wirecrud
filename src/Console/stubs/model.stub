@@ -6,10 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Illuminate\Database\Eloquent\Model;
 
+{@useUUid}
+
 class {@className} extends Model
 {
 
     use HasFactory;
+
+    {@uuid}
 
     protected $guarded = [];
 

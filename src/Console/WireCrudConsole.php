@@ -17,7 +17,9 @@ class WireCrudConsole extends Command
 {
     protected $signature = 'wirecrud:make';
 
-    protected $description = 'Generate Livewire 3 CRUD From Tables';
+    protected $description = 'Generate Livewire 3 CRUD From Existing Tables';
+
+    protected bool $uuid;
 
     protected Collection $fields;
 
@@ -49,7 +51,12 @@ class WireCrudConsole extends Command
 
     public function handle(): bool
     {
-        $this->getStub('a');
+        //ask to use uuid
+        $this->uuid = select(
+            label:'ID is uuid',
+            options:['yes', 'no'],
+            default:config('wirecrud.uuid') ? 'yes' : 'no',
+        );
         $tableName = text(label: 'table name on database:', required: true);
         $columns = Schema::getColumnListing($tableName);
         if (count($columns) == 0) {
@@ -163,7 +170,6 @@ class WireCrudConsole extends Command
         if ($generateModel == 'yes') {
             $this->generateModel();
         }
-
         if ($generateService == 'yes') {
             $this->generateService();
             $this->generateRepository();
@@ -209,12 +215,16 @@ class WireCrudConsole extends Command
             '{@className}',
             '{@table}',
             '{@primaryKey}',
+            '{@useUUid}',
+            '{@uuid}',
         ];
 
         $stubReplaceTemplate = [
             $this->className,
             $this->table,
             $this->primaryKey,
+            $this->uuid ? 'use Illuminate\Database\Eloquent\Concerns\HasUuids;' : '',
+            $this->uuid ? 'use HasUuids;' : '',
         ];
         $stub_template = file_get_contents($this->getStub('model.stub'));
         $modelTemplate = str_replace($stubTemplate, $stubReplaceTemplate, $stub_template);
