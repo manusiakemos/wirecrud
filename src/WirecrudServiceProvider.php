@@ -33,9 +33,9 @@ class WirecrudServiceProvider extends ServiceProvider
                 __DIR__.'/Console/stubs' => base_path('stubs/vendor/manusiakemos/wirecrud'),
             ], 'wirecrud:stubs');
 
-//            $this->publishes([
-//                __DIR__.'/../config/config.php' => config_path('wirecrud.php'),
-//            ], 'config');
+           $this->publishes([
+               __DIR__.'/../config/config.php' => config_path('wirecrud.php'),
+           ], 'config');
 
             // Publishing the views.
             $this->publishes([
