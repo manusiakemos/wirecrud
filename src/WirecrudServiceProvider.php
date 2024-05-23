@@ -35,7 +35,7 @@ class WirecrudServiceProvider extends ServiceProvider
 
            $this->publishes([
                __DIR__.'/../config/config.php' => config_path('wirecrud.php'),
-           ], 'config');
+           ], 'wirecrud:config');
 
             // Publishing the views.
             $this->publishes([
