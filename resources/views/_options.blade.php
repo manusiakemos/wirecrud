@@ -1,5 +1,5 @@
 public $options = [
     @foreach($fields as $column)
-        '{{$column['column']}}' => []
+        '{{$column['column']}}' => [],
     @endforeach
 ];
