@@ -27,7 +27,7 @@ class WireCrudConsole extends Command
 
     protected string $className;
 
-    protected string $classNameLower;
+    protected string $classNameCamel;
 
     protected string $classNameSpace;
 
@@ -53,9 +53,9 @@ class WireCrudConsole extends Command
     {
         //ask to use uuid
         $this->uuid = select(
-            label:'ID is uuid',
-            options:['yes', 'no'],
-            default:config('wirecrud.uuid') ? 'yes' : 'no',
+            label: 'ID is uuid',
+            options: ['yes', 'no'],
+            default: config('wirecrud.uuid') ? 'yes' : 'no',
         );
         $tableName = text(label: 'table name on database:', required: true);
         $columns = Schema::getColumnListing($tableName);
@@ -64,7 +64,7 @@ class WireCrudConsole extends Command
 
             return false;
         }
-        $className = text(label: 'class name:', default: Str::ucfirst($tableName), required: true);
+        $className = text(label: 'class name:', default: Str::studly($tableName), required: true);
         $pageType = select(
             label: 'Form Type',
             options: ['modal', 'page'],
@@ -141,7 +141,7 @@ class WireCrudConsole extends Command
                 if (Str::contains(haystack: $column, needles: 'id') || Str::contains(haystack: $column, needles: '_by') && $keyType == 'foreign') {
                     $label = Str::replace(search: 'id', replace: '', subject: $column);
                 } else {
-                    $label = Str::replace('_', ' ',Str::snake($column, ' '));
+                    $label = Str::replace('_', ' ', Str::snake($column, ' '));
                 }
 
                 $fields->push([
@@ -158,9 +158,9 @@ class WireCrudConsole extends Command
         Log::debug('fields', $fields->toArray());
         $this->fields = $fields;
         $this->className = $className;
-        $this->classNameLower = strtolower(Str::camel($className));
-        $this->classNameSlug = strtolower(Str::slug(Str::snake($className, '-')));
-        $this->classNameSpace = Str::replace('_', ' ', Str::title($className));
+        $this->classNameSpace = Str::of($className)->headline();
+        $this->classNameCamel = Str::of($this->classNameSpace)->camel();
+        $this->classNameSlug = Str::of($this->classNameSpace)->slug();
         $this->table = $tableName;
         $this->isModal = $pageType == 'modal';
         $this->hasUpload = $hasUpload;
@@ -310,16 +310,16 @@ class WireCrudConsole extends Command
             $useTraitFile = View::make('wirecrud::_use-trait')->render();
             $traitFile = 'use UploadFileTrait,WithFileUploads;';
             $storeUpload = View::make('wirecrud::_store-upload', [
-                'classNameLower' => $this->classNameLower,
+                'classNameLower' => $this->classNameCamel,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
             ])->render();
             $updateUpload = View::make('wirecrud::_update-upload', [
-                'classNameLower' => $this->classNameLower,
+                'classNameLower' => $this->classNameCamel,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
             ])->render();
 
             $deleteUpload = View::make('wirecrud::_delete-upload', [
-                'classNameLower' => $this->classNameLower,
+                'classNameLower' => $this->classNameCamel,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
             ])->render();
         } else {
@@ -336,13 +336,13 @@ class WireCrudConsole extends Command
 
         $handleRequest = View::make('wirecrud::_helper_handle_request', [
             'fields' => $this->fields,
-            'classNameLower' => $this->classNameLower,
+            'classNameLower' => $this->classNameCamel,
         ])->render();
 
         $validate = View::make('wirecrud::_helper_validate_generator', [
             'hasUpload' => $this->hasUpload,
             'field_validate' => $this->fields->where('key_type', '<>', 'primary')->where('type', '<>', 'file'),
-            'classNameLower' => $this->classNameLower,
+            'classNameLower' => $this->classNameCamel,
         ])->render();
 
         $generatedProps = View::make('wirecrud::_helper_props', [
@@ -351,7 +351,7 @@ class WireCrudConsole extends Command
 
         $columns = View::make('wirecrud::_helper_columns', [
             'fields' => $this->fields->where('key_type', '<>', 'primary'),
-            'classNameLower' => $this->classNameLower,
+            'classNameLower' => $this->classNameCamel,
         ])->render();
 
         $stubTemplate = [
@@ -382,7 +382,7 @@ class WireCrudConsole extends Command
             $traitFile,
             $this->primaryKey,
             $this->className,
-            $this->classNameLower,
+            $this->classNameCamel,
             $handleRequest,
             $validate,
             $columns,
@@ -441,7 +441,7 @@ class WireCrudConsole extends Command
             $this->primaryKey,
             $this->className,
             $this->classNameSlug,
-            $this->classNameLower,
+            $this->classNameCamel,
             $this->classNameSpace,
         ];
         if ($this->isModal) {
@@ -461,9 +461,9 @@ class WireCrudConsole extends Command
     {
         $forms = View::make('wirecrud::_helper_form', [
             'fields' => $this->fields->where('key_type', '<>', 'primary'),
-            'model' => $this->classNameLower,
+            'model' => $this->classNameCamel,
         ])->render();
-        $forms = str_replace('xxx', 'x', $forms);
+        $forms = str_replace('wirex', 'x', $forms);
 
         $search = [
             '{@pk}',
@@ -480,7 +480,7 @@ class WireCrudConsole extends Command
             $this->table,
             $forms,
             $this->classNameSlug,
-            $this->classNameLower,
+            $this->classNameCamel,
             $this->classNameSpace,
         ];
 
@@ -510,7 +510,7 @@ class WireCrudConsole extends Command
         $stubReplaceTemplate = [
             $this->primaryKey,
             $this->className,
-            $this->classNameLower,
+            $this->classNameCamel,
             $this->classNameSlug,
         ];
         if ($this->isModal) {
@@ -537,13 +537,13 @@ class WireCrudConsole extends Command
         $replace = [
             $this->primaryKey,
             $this->className,
-            $this->classNameLower,
+            $this->classNameCamel,
             $this->classNameSlug,
             $this->classNameSpace,
         ];
         $subject = file_get_contents($this->getStub('nav.stub'));
         $template = str_replace($search, $replace, $subject);
-        $path = resource_path("views/livewire/$this->classNameLower");
+        $path = resource_path("views/livewire/$this->classNameCamel");
         File::isDirectory($path) or File::makeDirectory($path, 0755, true, true);
         $pathToWrite = resource_path("views/livewire/$this->classNameSlug/_$this->classNameSlug-nav.blade.php");
         file_put_contents($pathToWrite, $template);
@@ -590,7 +590,7 @@ class WireCrudConsole extends Command
     {
         $validate = View::make('wirecrud::_helper_validate_generator_api', [
             'field_validate' => $this->fields->where('key_type', '<>', 'primary'),
-            'classNameLower' => $this->classNameLower,
+            'classNameLower' => $this->classNameCamel,
         ])->render();
 
         $stubTemplate = [
@@ -601,7 +601,7 @@ class WireCrudConsole extends Command
         ];
         $stubReplaceTemplate = [
             $this->className,
-            $this->classNameLower,
+            $this->classNameCamel,
             $this->classNameSlug,
             $validate,
         ];
@@ -623,7 +623,7 @@ class WireCrudConsole extends Command
         ];
         $stubReplaceTemplate = [
             $this->className,
-            $this->classNameLower,
+            $this->classNameCamel,
             $this->classNameSlug,
             $this->primaryKey,
         ];

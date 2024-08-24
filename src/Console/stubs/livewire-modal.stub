@@ -6,16 +6,13 @@ use Livewire\Component;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
-use App\Services\{@className}\{@className}Service;
+use App\Repositories\{@className}\{@className}Repository;
 use WireUi\Traits\Actions;
-{@useTraitFile}
 
 class {@className}Page extends Component
 {
-    {@traitFile}
-    
     protected $listeners = ['create', 'edit'];
-    protected {@className}Service ${@classNameLower}Service;
+    protected {@className}Repository ${@classNameLower}Repository;
 
     public mixed $myFile = null;
 
@@ -25,9 +22,9 @@ class {@className}Page extends Component
     public bool $showModalForm = false;
     {@options}
 
-    public function boot({@className}Service ${@classNameLower}Service): void
+    public function boot({@className}Repository ${@classNameLower}Repository): void
     {
-        $this->{@classNameLower}Service = ${@classNameLower}Service;
+        $this->{@classNameLower}Repository = ${@classNameLower}Repository;
     }
 
     public function mount(): void
@@ -71,7 +68,7 @@ class {@className}Page extends Component
         );
         $this->updateMode = false;
         {@storeUpload}
-        $this->{@classNameLower}Service->create($data['{@classNameLower}']);
+        $this->{@classNameLower}Repository->create($data['{@classNameLower}']);
         $this->reset(['{@classNameLower}', 'showModalForm']);
         $this->notification()->send([
             'title' => '{@classNameSpace} berhasil ditambahkan',
@@ -85,7 +82,7 @@ class {@className}Page extends Component
         $this->reset(['{@classNameLower}', 'showModalForm','myFile']);
         $this->updateMode = true;
         $this->setOptions();
-        $this->{@classNameLower} =  $this->{@classNameLower}Service->find($id)->toArray();
+        $this->{@classNameLower} =  $this->{@classNameLower}Repository->find($id)->toArray();
         $this->showModalForm = true;
     }
 
@@ -97,7 +94,7 @@ class {@className}Page extends Component
         );
         {@updateUpload}
         if ($this->{@classNameLower}['{@primaryKey}'] && $this->updateMode) {
-            $this->{@classNameLower}Service->update($this->{@classNameLower}['{@primaryKey}'],$data['{@classNameLower}']);
+            $this->{@classNameLower}Repository->update($this->{@classNameLower}['{@primaryKey}'],$data['{@classNameLower}']);
            } else {
              abort('403', '{@className} Not Found');
         }
@@ -111,7 +108,7 @@ class {@className}Page extends Component
 
     public function destroy($id): void
     {
-         $data = $this->{@classNameLower}Service->find($id);
+         $data = $this->{@classNameLower}Repository->find($id);
          {@deleteUpload}
          $data->delete();
          $this->notification()->send([
