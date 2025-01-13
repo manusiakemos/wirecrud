@@ -7,7 +7,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use App\Repositories\{@className}\{@className}Repository;
-use WireUi\Traits\Actions;
+use WireUi\Traits\WireUiActions;
 
 class {@className}Page extends Component
 {
@@ -16,7 +16,7 @@ class {@className}Page extends Component
 
     public mixed $myFile = null;
 
-    use Actions;
+    use WireUiActions;
     public bool $updateMode = false;
     public array ${@classNameLower} = {@generatedProps};
     public bool $showModalForm = false;

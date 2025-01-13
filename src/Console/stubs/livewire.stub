@@ -7,14 +7,14 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use App\Services\{@className}\{@className}Service;
-use WireUi\Traits\Actions;
+use WireUi\Traits\WireUiActions;
 {@useTraitFile}
 
 class {@className}Page extends Component
 {
     {@traitFile}
 
-    use Actions;
+    use WireUiActions;
 
     protected $listeners = ['create', 'edit'];
     protected {@className}Service ${@classNameLower};

@@ -16,12 +16,12 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.3",
         "laravel/framework": "^10.0",
         "livewire/livewire": "^3.0",
         "yaza/laravel-repository-service": "^4.0",
         "rappasoft/laravel-livewire-tables": "^3.0",
-        "wireui/wireui": "^1.19"
+        "wireui/wireui": "^2.0"
     },
     "require-dev": {
         "orchestra/testbench": "^8.0",
