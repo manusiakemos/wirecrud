@@ -1,9 +1,9 @@
 <div class="flex justify-center items-center gap-1">
-    <x-button.circle primary href="{{route('{@classNameSlug}.form', [{@primaryKey} => $row->{@primaryKey})}]}">
+    <x-mini-button primary href="{{route('{@classNameSlug}.form', [{@primaryKey} => $row->{@primaryKey})}]}">
         <x-icon name="pencil" class="w-5 h-5"/>
-    </x-button.circle>
-    <x-button.circle negative wire:click="$dispatch('confirmDestroy',{ id : {{$row->{@primaryKey}}} })">
+    </x-mini-button>
+    <x-mini-button negative wire:click="$dispatch('confirmDestroy',{ id : {{$row->{@primaryKey}}} })">
         <x-icon name="trash" class="w-5 h-5"/>
-    </x-button.circle>
+    </x-mini-button>
 </div>
 

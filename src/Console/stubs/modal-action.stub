@@ -1,10 +1,10 @@
 <div class="flex justify-center items-center">
-    <x-button.circle primary icon="pencil"
+    <x-mini-button primary icon="pencil"
                  wire:click="$dispatchTo('{@classNameLower}.{@classNameLower}-page', 'edit',[{{$row->{@primaryKey}}}])">
         <span class="flex items-center fi-rr-pencil"></span>
-    </x-button>
-    <x-button.circle negative icon="trash"
+    </x-mini-button>
+    <x-mini-button negative icon="trash"
                     wire:click="$dispatch('confirmDestroy', {{$row->{@primaryKey}}})">
         <span class="flex items-center fi-rr-trash"></span>
-    </x-button>
+    </x-mini-button>
 </div>
