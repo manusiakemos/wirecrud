@@ -1,4 +1,4 @@
-<x-modal.card blur wire:model.defer="showModalForm" align="start">
+<x-modal-card blur wire:model.defer="showModalForm" align="start">
     <form action="#" wire:submit.prevent="save" class="relative flex flex-col gap-4">
 
         <div class="grid grid-cols-1 gap-4">
@@ -11,4 +11,4 @@
                 label=" {{ $updateMode ? __('messages.save_changes') : __('messages.save') }}"/>
         </div>
     </form>
-</x-modal.card>
+</x-modal-card>
