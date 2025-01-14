@@ -19,7 +19,7 @@
         "php": "^8.3",
         "laravel/framework": "^11.0",
         "livewire/livewire": "^3.4",
-        "yaza/laravel-repository-service": "^4.0",
+        "yaza/laravel-repository-service": "^5.0",
         "rappasoft/laravel-livewire-tables": "^3.0",
         "wireui/wireui": "^2.0"
     },
