@@ -38,7 +38,5 @@
 
 
 @push('scripts')
-    @push('scripts')
-        <x-atoms.default-script page-name="{@classNameSlug}" />
-    @endpush
+    <x-atoms.default-script page-name="{@classNameSlug}" />
 @endpush

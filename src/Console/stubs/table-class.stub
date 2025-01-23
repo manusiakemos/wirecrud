@@ -15,6 +15,7 @@ class {@className}Table extends DataTableComponent
             $this->setPrimaryKey("{@primaryKey}")
             ->setUseHeaderAsFooterEnabled()
             ->setPerPageAccepted([10, 25, 50])
+            ->setDefaultSort('created_at', 'desc')
             ->setThAttributes(function (Column $column) {
                 if ($column->getTitle() == 'Action') {
                     return [

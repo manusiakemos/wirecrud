@@ -11,12 +11,12 @@ use WireUi\Traits\WireUiActions;
 
 class {@className}Page extends Component
 {
+    use WireUiActions;
+
     protected $listeners = ['create', 'edit'];
     protected {@className}Repository ${@classNameLower}Repository;
 
-    public mixed $myFile = null;
-
-    use WireUiActions;
+    public mixed $myFile = null;    
     public bool $updateMode = false;
     public array ${@classNameLower} = {@generatedProps};
     public bool $showModalForm = false;
@@ -38,11 +38,6 @@ class {@className}Page extends Component
         return view('livewire.{@classNameSlug}.{@classNameSlug}-page');
     }
 
-    public function setOptions()
-    {
-
-    }
-
      public function save(): void
      {
          $this->updateMode ? $this->update() : $this->store();
@@ -57,7 +52,7 @@ class {@className}Page extends Component
     public function create(): void
     {
         $this->reset(['{@classNameLower}', 'updateMode', 'myFile']);
-        $this->setOptions();
+        // $this->setOptions();
         $this->showModalForm = true;
     }
 
@@ -118,5 +113,10 @@ class {@className}Page extends Component
 
         $this->dispatch('refreshDt', false);
         $this->reset(['{@classNameLower}', 'updateMode']);
+    }
+
+    public function setOptions()
+    {
+
     }
 }
