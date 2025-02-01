@@ -1,39 +1,35 @@
 <x-slot name="htmlTitle">
-    <title>{@className}</title>
+    <title>{@classNameSpace}</title>
 </x-slot>
 
-<section class="content overflow-x-auto rounded-lg overflow-y-auto h-full mx-auto">
-    <div class="pb-3">
-        <x-atoms.custom-breadcrumb>
-            <x-atoms.breadcrumb-item label="Home" href="#" />
-            <x-atoms.breadcrumb-item label="{@classNameSpace}" active />
-        </x-atoms.custom-breadcrumb>
-    </div>
-    <div class="mb-3">
-        <div class="mb-5 flex flex-grow flex-col md:flex-row items-center justify-center md:justify-between">
-            <x-atoms.heading label="{@classNameSpace}" />
+<section id="main-content"
+    class="content overflow-x-auto rounded-lg overflow-y-auto h-full mx-auto grid grid-cols-1 gap-4">
+    {{-- breadcrumb --}}
+    <x-atoms.custom-breadcrumb>
+        <x-atoms.breadcrumb-item label="Home" href="#" />
+        <x-atoms.breadcrumb-item label="{@classNameSpace}" active />
+    </x-atoms.custom-breadcrumb>
 
-            <div class="flex flex-wrap gap-1">
-                <x-button class="grow" wire:click="create" primary>
-                    {{ __('messages.add') }} {@classNameSpace}
-                </x-button>
-                <x-button class="grow" primary wire:click="$dispatch('refreshDt', true)">
-                    {{ __('messages.refresh_table') }}
-                </x-button>
-            </div>
+    {{-- heading and buttons --}}
+    <div id="top-content" class="flex flex-grow flex-col md:flex-row items-center justify-center md:justify-between">
+        <x-atoms.heading label="{@classNameSpace}" />
+
+        <div class="flex flex-wrap gap-1">
+            <x-button class="grow" wire:click="create" primary>
+                {{ __('messages.add') }} {@classNameSpace}
+            </x-button>
+            <x-button class="grow" primary wire:click="$dispatch('refreshDt', true)">
+                {{ __('messages.refresh_table') }}
+            </x-button>
         </div>
-
-        <div id="main-content">
-
-            {{-- {@classNameLower} table data --}}
-            <livewire:{@classNameSlug}.{@classNameSlug}-table />
-
-            {{-- {@classNameLower} form --}}
-            @include('livewire.{@classNameSlug}._{@classNameSlug}-form')
-
-        </div>
-
     </div>
+
+    {{-- {@classNameLower} table data --}}
+    <livewire:{@classNameSlug}.{@classNameSlug}-table />
+
+    {{-- {@classNameLower} form --}}
+    @include('livewire.{@classNameSlug}._{@classNameSlug}-form')
+
 </section>
 
 

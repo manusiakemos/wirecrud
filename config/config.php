@@ -6,9 +6,8 @@
 return [
     'model' => true,
     'livewire' => true,
-    'repository' => true,
     'service' => true,
     'view' => true,
     'api' => true,
-    'uuid' => true,
+    'uuid' => false,
 ];

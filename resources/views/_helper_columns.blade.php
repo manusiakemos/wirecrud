@@ -2,7 +2,7 @@
 @php
 $labelnya = Str::replace('_', ' ', $column['label']);
 @endphp
-@if($column['type'] == 'boolean')
+@if($column['type'] == 'tinyint' || $column['type'] == 'boolean')
     BooleanColumn::make('{{$labelnya}}', '{{$column['column']}}')
     ->searchable()
     ->sortable(),

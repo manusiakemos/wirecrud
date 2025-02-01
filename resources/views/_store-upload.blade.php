@@ -1,2 +1,2 @@
-$filename = $this->uploadFile('{{$classNameLower}}', $this->myFile);
-$data['{{$classNameLower}}']['{{$uploadColumn['column']}}'] = $filename;
+$filename = $this->uploadFile('{{$classNameSlug}}', $this->myFile, null, 'local');
+$data['{{$classNameSnake}}']['{{$uploadColumn['column']}}'] = $filename;

@@ -31,6 +31,8 @@ class WireCrudConsole extends Command
 
     protected string $classNameSpace;
 
+    protected string $classNameSnake;
+
     protected string $table;
 
     protected string $classNameSlug;
@@ -51,22 +53,17 @@ class WireCrudConsole extends Command
 
     public function handle(): bool
     {
-        //ask to use uuid
-        $this->uuid = select(
-            label: 'ID is uuid',
-            options: ['yes', 'no'],
-            default: config('wirecrud.uuid') ? 'yes' : 'no',
-        );
         $tableName = text(label: 'table name on database:', required: true);
+        $this->table = $tableName;
         $columns = Schema::getColumnListing($tableName);
         if (count($columns) == 0) {
             $this->error('table not found');
-
             return false;
         }
+
         $className = text(label: 'class name:', default: Str::studly($tableName), required: true);
         $pageType = select(
-            label: 'Form Type',
+            label: 'Form Page Type',
             options: ['modal', 'page'],
             default: 'modal'
         );
@@ -79,11 +76,6 @@ class WireCrudConsole extends Command
             label: 'Generate Livewire',
             options: ['yes', 'no'],
             default: config('wirecrud.livewire') ? 'yes' : 'no'
-        );
-        $generateRepository = select(
-            label: 'Generate Repository',
-            options: ['yes', 'no'],
-            default: config('wirecrud.repository') ? 'yes' : 'no'
         );
         $generateService = select(
             label: 'Generate Service',
@@ -108,7 +100,7 @@ class WireCrudConsole extends Command
         $fields = collect();
         $hasUpload = false;
         foreach ($columns as $column) {
-            $labelColumn = false;
+            $labelColumnFk = false;
             $type = Schema::getColumnType($tableName, $column);
             $keyType = false;
             if (Str::contains(haystack: $column, needles: 'id')) {
@@ -119,8 +111,15 @@ class WireCrudConsole extends Command
                 );
                 if ($keyType == 'foreign') {
                     $type = 'select';
-                    $labelColumn = text(label: $column . ' label column for select component', default: 'name', required: true);
+                    $labelColumnFk = text(label: $column . ' label column for select component', default: 'name', required: true);
                 } elseif ($keyType == 'primary') {
+                    //ask to use uuid
+                    $uuid = select(
+                        label: 'ID is uuid',
+                        options: ['yes', 'no'],
+                        default: config('wirecrud.uuid') ? 'yes' : 'no',
+                    );
+                    $this->uuid = $uuid === 'yes';
                     $type = 'invisible';
                 }
             }
@@ -150,7 +149,7 @@ class WireCrudConsole extends Command
                     'column' => $column,
                     'type' => $type,
                     'is_upload' => $isUpload == 'yes',
-                    'label_column' => $labelColumn,
+                    'label_column' => $labelColumnFk,
                 ]);
             }
         }
@@ -159,6 +158,7 @@ class WireCrudConsole extends Command
         $this->fields = $fields;
         $this->className = $className;
         $this->classNameSpace = Str::of($className)->headline();
+        $this->classNameSnake = Str::of($className)->snake();
         $this->classNameCamel = Str::of($this->classNameSpace)->camel();
         $this->classNameSlug = Str::of($this->classNameSpace)->slug();
         $this->table = $tableName;
@@ -170,12 +170,11 @@ class WireCrudConsole extends Command
         if ($generateModel == 'yes') {
             $this->generateModel();
         }
+        $this->generateRepository();
+        $this->generateSeeder();
+        $this->generateFactory();
         if ($generateService == 'yes') {
             $this->generateService();
-            $this->generateRepository();
-        }
-        if ($generateRepository == 'yes' && $generateService == 'no') {
-            $this->generateRepository();
         }
         if ($generateLivewire) {
             $this->generateLivewire();
@@ -183,8 +182,6 @@ class WireCrudConsole extends Command
         if ($generateView) {
             $this->generateView();
         }
-        $this->generateSeeder();
-        $this->generateFactory();
         if ($generateApi == 'yes') {
             $this->generateApi();
         }
@@ -211,7 +208,14 @@ class WireCrudConsole extends Command
     */
     private function generateModel(): void
     {
+        $getBooleanColumns = $this->fields->where('type', 'tinyint')->pluck('column')->toArray();
+        $castsString = 'protected $casts = [';
+        foreach ($getBooleanColumns as $column) {
+            $castsString .= "'$column' => 'boolean',";
+        }
+        $castsString .= '];';   
         $stubTemplate = [
+            '{@casts}',
             '{@className}',
             '{@table}',
             '{@primaryKey}',
@@ -220,11 +224,11 @@ class WireCrudConsole extends Command
         ];
 
         $stubReplaceTemplate = [
+            $castsString,
             $this->className,
             $this->table,
             $this->primaryKey,
             $this->uuid ? 'use Illuminate\Database\Eloquent\Concerns\HasUuids;' : '',
-            $this->uuid ? 'use HasUuids;' : '',
         ];
         $stub_template = file_get_contents($this->getStub('model.stub'));
         $modelTemplate = str_replace($stubTemplate, $stubReplaceTemplate, $stub_template);
@@ -308,18 +312,21 @@ class WireCrudConsole extends Command
     {
         if ($this->hasUpload) {
             $useTraitFile = View::make('wirecrud::_use-trait')->render();
-            $traitFile = 'use UploadFileTrait,WithFileUploads;';
+            $traitFile = 'use UploadFileTrait;';
             $storeUpload = View::make('wirecrud::_store-upload', [
-                'classNameLower' => $this->classNameCamel,
+                'classNameSlug' => $this->classNameSlug,
+                'classNameSnake' => $this->classNameSnake,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
             ])->render();
             $updateUpload = View::make('wirecrud::_update-upload', [
-                'classNameLower' => $this->classNameCamel,
+                'classNameSlug' => $this->classNameSlug,
+                'classNameSnake' => $this->classNameSnake,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
             ])->render();
 
             $deleteUpload = View::make('wirecrud::_delete-upload', [
-                'classNameLower' => $this->classNameCamel,
+                'classNameSlug' => $this->classNameSlug,
+                'classNameSnake' => $this->classNameSnake,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
             ])->render();
         } else {
@@ -336,13 +343,13 @@ class WireCrudConsole extends Command
 
         $handleRequest = View::make('wirecrud::_helper_handle_request', [
             'fields' => $this->fields,
-            'classNameLower' => $this->classNameCamel,
+            'classNameLower' => $this->classNameSnake,
         ])->render();
 
         $validate = View::make('wirecrud::_helper_validate_generator', [
             'hasUpload' => $this->hasUpload,
             'field_validate' => $this->fields->where('key_type', '<>', 'primary')->where('type', '<>', 'file'),
-            'classNameLower' => $this->classNameCamel,
+            'classNameLower' => $this->classNameSnake,
         ])->render();
 
         $generatedProps = View::make('wirecrud::_helper_props', [
@@ -351,7 +358,7 @@ class WireCrudConsole extends Command
 
         $columns = View::make('wirecrud::_helper_columns', [
             'fields' => $this->fields->where('key_type', '<>', 'primary'),
-            'classNameLower' => $this->classNameCamel,
+            'classNameLower' => $this->classNameSnake,
         ])->render();
 
         $stubTemplate = [
@@ -363,12 +370,14 @@ class WireCrudConsole extends Command
             '{@useTraitFile}',
             '{@traitFile}',
             '{@primaryKey}',
-            '{@className}',
-            '{@classNameLower}',
             '{@handleRequest}',
             '{@validate}',
             '{@columns}',
             '{@generatedProps}',
+            '{@className}',
+            '{@classNameLower}',
+            '{@classNameCamel}',
+            '{@classNameSnake}',
             '{@classNameSpace}',
             '{@classNameSlug}',
         ];
@@ -381,12 +390,14 @@ class WireCrudConsole extends Command
             $useTraitFile,
             $traitFile,
             $this->primaryKey,
-            $this->className,
-            $this->classNameCamel,
             $handleRequest,
             $validate,
             $columns,
             $generatedProps,
+            $this->className,
+            $this->classNameSnake,
+            $this->classNameCamel,
+            $this->classNameSnake,
             $this->classNameSpace,
             $this->classNameSlug,
         ];
@@ -461,7 +472,7 @@ class WireCrudConsole extends Command
     {
         $forms = View::make('wirecrud::_helper_form', [
             'fields' => $this->fields->where('key_type', '<>', 'primary'),
-            'model' => $this->classNameCamel,
+            'model' => $this->classNameSnake,
         ])->render();
         $forms = str_replace('wirex', 'x', $forms);
 
@@ -480,7 +491,7 @@ class WireCrudConsole extends Command
             $this->table,
             $forms,
             $this->classNameSlug,
-            $this->classNameCamel,
+            $this->classNameSnake,
             $this->classNameSpace,
         ];
 

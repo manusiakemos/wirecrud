@@ -1,1 +1,1 @@
-$this->deleteFile('{{$classNameLower}}', $data['{{$uploadColumn['column']}}']);
+$this->deleteFile('{{$classNameSlug}}', $data['{{$uploadColumn['column']}}']);

@@ -14,7 +14,7 @@
             <x-atoms.heading label="{@classNameSpace}" />
 
             <div class="flex flex-wrap gap-1">
-                <x-button class="grow" href="{{ route('{@classNameLower}.form') }}" primary>
+                <x-button class="grow" wire:click="create" primary>
                     {{ __('messages.add') }} {@classNameSpace}
                 </x-button>
                 <x-button class="grow" primary wire:click="$dispatch('refreshDt', true)">
@@ -24,17 +24,16 @@
         </div>
 
         <div id="main-content">
+
             {{-- {@classNameLower} table data --}}
             <livewire:{@classNameSlug}.{@classNameSlug}-table />
+
         </div>
 
     </div>
 </section>
 
 
-
 @push('scripts')
-    @push('scripts')
-        <x-atoms.default-script page-name="{@classNameSlug}" />
-    @endpush
+    <x-atoms.default-script page-name="{@classNameSlug}" />
 @endpush

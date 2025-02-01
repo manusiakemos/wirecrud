@@ -7,30 +7,23 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use App\Repositories\{@className}\{@className}Repository;
-use WireUi\Traits\WireUiActions;
 
 class {@className}Page extends Component
 {
-    use WireUiActions;
+    use \WireUi\Traits\WireUiActions;
+    use \App\Traits\UploadFileTrait;
 
     protected $listeners = ['create', 'edit'];
-    protected {@className}Repository ${@classNameLower}Repository;
+    protected {@className}Repository ${@classNameCamel}Repository;
 
-    public mixed $myFile = null;    
     public bool $updateMode = false;
-    public array ${@classNameLower} = {@generatedProps};
+    public array ${@classNameSnake} = {@generatedProps};
     public bool $showModalForm = false;
     {@options}
 
-    public function boot({@className}Repository ${@classNameLower}Repository): void
+    public function boot({@className}Repository ${@classNameCamel}Repository): void
     {
-        $this->{@classNameLower}Repository = ${@classNameLower}Repository;
-    }
-
-    public function mount(): void
-    {
-        session()->put('active', '{@classNameSlug}');
-        session()->put('expanded', 'admin');
+        $this->{@classNameCamel}Repository = ${@classNameCamel}Repository;
     }
 
     public function render(): Factory|View|Application
@@ -51,8 +44,7 @@ class {@className}Page extends Component
 
     public function create(): void
     {
-        $this->reset(['{@classNameLower}', 'updateMode', 'myFile']);
-        // $this->setOptions();
+        $this->reset(['{@classNameSnake}', 'updateMode', 'myFile']);
         $this->showModalForm = true;
     }
 
@@ -63,8 +55,8 @@ class {@className}Page extends Component
         );
         $this->updateMode = false;
         {@storeUpload}
-        $this->{@classNameLower}Repository->create($data['{@classNameLower}']);
-        $this->reset(['{@classNameLower}', 'showModalForm']);
+        $this->{@classNameCamel}Repository->create($data['{@classNameSnake}']);
+        $this->reset(['{@classNameSnake}', 'showModalForm']);
         $this->notification()->send([
             'title' => '{@classNameSpace} berhasil ditambahkan',
             'icon'  => 'success'
@@ -74,10 +66,9 @@ class {@className}Page extends Component
 
     public function edit($id): void
     {
-        $this->reset(['{@classNameLower}', 'showModalForm','myFile']);
+        $this->reset(['{@classNameSnake}', 'showModalForm','myFile']);
         $this->updateMode = true;
-        $this->setOptions();
-        $this->{@classNameLower} =  $this->{@classNameLower}Repository->find($id)->toArray();
+        $this->{@classNameSnake} =  $this->{@classNameCamel}Repository->find($id)->toArray();
         $this->showModalForm = true;
     }
 
@@ -88,12 +79,12 @@ class {@className}Page extends Component
             {@validate}
         );
         {@updateUpload}
-        if ($this->{@classNameLower}['{@primaryKey}'] && $this->updateMode) {
-            $this->{@classNameLower}Repository->update($this->{@classNameLower}['{@primaryKey}'],$data['{@classNameLower}']);
-           } else {
-             abort('403', '{@className} Not Found');
+        if ($this->{@classNameSnake}['{@primaryKey}'] && $this->updateMode) {
+            $this->{@classNameCamel}Repository->update($this->{@classNameSnake}['{@primaryKey}'],$data['{@classNameSnake}']);
+        } else {
+            abort('403', '{@classNameSpace} Not Found');
         }
-        $this->reset(['{@classNameLower}', 'showModalForm']);
+        $this->reset(['{@classNameSnake}', 'showModalForm']);
         $this->notification()->send([
           'title' => '{@classNameSpace} berhasil diupdate',
           'icon'  => 'success'
@@ -103,7 +94,7 @@ class {@className}Page extends Component
 
     public function destroy($id): void
     {
-         $data = $this->{@classNameLower}Repository->find($id);
+         $data = $this->{@classNameCamel}Repository->find($id);
          {@deleteUpload}
          $data->delete();
          $this->notification()->send([
@@ -112,11 +103,6 @@ class {@className}Page extends Component
         ]);
 
         $this->dispatch('refreshDt', false);
-        $this->reset(['{@classNameLower}', 'updateMode']);
-    }
-
-    public function setOptions()
-    {
-
+        $this->reset(['{@classNameSnake}', 'updateMode']);
     }
 }
