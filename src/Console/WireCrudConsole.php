@@ -554,7 +554,7 @@ class WireCrudConsole extends Command
         ];
         $subject = file_get_contents($this->getStub('nav.stub'));
         $template = str_replace($search, $replace, $subject);
-        $path = resource_path("views/livewire/$this->classNameCamel");
+        $path = resource_path("views/livewire/$this->classNameSlug");
         File::isDirectory($path) or File::makeDirectory($path, 0755, true, true);
         $pathToWrite = resource_path("views/livewire/$this->classNameSlug/_$this->classNameSlug-nav.blade.php");
         file_put_contents($pathToWrite, $template);
