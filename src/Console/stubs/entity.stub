@@ -1,0 +1,8 @@
+<?php
+
+namespace App\Livewire\{@className};
+
+trait {@className}Entity
+{
+    public array ${@classNameSnake} = {@generatedProps};
+}

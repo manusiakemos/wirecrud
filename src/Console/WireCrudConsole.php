@@ -310,21 +310,22 @@ class WireCrudConsole extends Command
     */
     private function generateLivewire(): void
     {
+
         if ($this->hasUpload) {
-            $useTraitFile = View::make('wirecrud::_use-trait')->render();
+            $useTraitFile = View::make('wirecrud::string-builder._use-trait')->render();
             $traitFile = 'use UploadFileTrait;';
-            $storeUpload = View::make('wirecrud::_store-upload', [
+            $storeUpload = View::make('wirecrud::string-builder._store-upload', [
                 'classNameSlug' => $this->classNameSlug,
                 'classNameSnake' => $this->classNameSnake,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
             ])->render();
-            $updateUpload = View::make('wirecrud::_update-upload', [
+            $updateUpload = View::make('wirecrud::string-builder._update-upload', [
                 'classNameSlug' => $this->classNameSlug,
                 'classNameSnake' => $this->classNameSnake,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
             ])->render();
 
-            $deleteUpload = View::make('wirecrud::_delete-upload', [
+            $deleteUpload = View::make('wirecrud::string-builder._delete-upload', [
                 'classNameSlug' => $this->classNameSlug,
                 'classNameSnake' => $this->classNameSnake,
                 'uploadColumn' => $this->fields->where('type', '=', 'file')->first(),
@@ -337,26 +338,22 @@ class WireCrudConsole extends Command
             $deleteUpload = '';
         }
 
-        $options = View::make('wirecrud::_options', [
+        $options = View::make('wirecrud::string-builder._options', [
             'fields' => $this->fields->where('key_type', '=', 'foreign')->toArray(),
         ])->render();
 
-        $handleRequest = View::make('wirecrud::_helper_handle_request', [
+        $handleRequest = View::make('wirecrud::string-builder._helper_handle_request', [
             'fields' => $this->fields,
             'classNameLower' => $this->classNameSnake,
         ])->render();
 
-        $validate = View::make('wirecrud::_helper_validate_generator', [
+        $validate = View::make('wirecrud::string-builder._helper_validate_generator', [
             'hasUpload' => $this->hasUpload,
             'field_validate' => $this->fields->where('key_type', '<>', 'primary')->where('type', '<>', 'file'),
             'classNameLower' => $this->classNameSnake,
         ])->render();
 
-        $generatedProps = View::make('wirecrud::_helper_props', [
-            'fields' => $this->fields,
-        ])->render();
-
-        $columns = View::make('wirecrud::_helper_columns', [
+        $columns = View::make('wirecrud::string-builder._helper_columns', [
             'fields' => $this->fields->where('key_type', '<>', 'primary'),
             'classNameLower' => $this->classNameSnake,
         ])->render();
@@ -373,7 +370,6 @@ class WireCrudConsole extends Command
             '{@handleRequest}',
             '{@validate}',
             '{@columns}',
-            '{@generatedProps}',
             '{@className}',
             '{@classNameLower}',
             '{@classNameCamel}',
@@ -393,7 +389,6 @@ class WireCrudConsole extends Command
             $handleRequest,
             $validate,
             $columns,
-            $generatedProps,
             $this->className,
             $this->classNameSnake,
             $this->classNameCamel,
@@ -410,6 +405,7 @@ class WireCrudConsole extends Command
         $template = str_replace($stubTemplate, $stubReplaceTemplate, $templateFile);
         $path = app_path("/Livewire/$this->className");
         File::isDirectory($path) or File::makeDirectory($path, 0775, true, true);
+        $this->generateEntity();
         file_put_contents(app_path("/Livewire/$this->className/{$this->className}Page.php"), $template);
         if (!$this->isModal) {
             $templateFile = file_get_contents($this->getStub('livewire-form.stub'));
@@ -420,6 +416,32 @@ class WireCrudConsole extends Command
         $templateFile = file_get_contents($this->getStub('table-class.stub'));
         $template = str_replace($stubTemplate, $stubReplaceTemplate, $templateFile);
         file_put_contents(app_path("/Livewire/$this->className/{$this->className}Table.php"), $template);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Generated Entity class
+    |--------------------------------------------------------------------------
+    */
+    private function generateEntity(): void
+    {
+        $generatedProps = View::make('wirecrud::string-builder._helper_props', [
+            'fields' => $this->fields,
+        ])->render();
+
+        $templateFile = file_get_contents($this->getStub('entity.stub'));
+        $stubTemplate = [
+            '{@generatedProps}',
+            '{@className}',
+            '{@classNameSnake}',
+        ];
+        $stubReplaceTemplate = [
+            $generatedProps,
+            $this->className,
+            $this->classNameSnake,
+        ];
+        $template = str_replace($stubTemplate, $stubReplaceTemplate, $templateFile);
+        file_put_contents(app_path("/Livewire/$this->className/{$this->className}Entity.php"), $template);
     }
 
     /*
@@ -470,7 +492,7 @@ class WireCrudConsole extends Command
 
     public function generateFormView(): void
     {
-        $forms = View::make('wirecrud::_helper_form', [
+        $forms = View::make('wirecrud::string-builder._helper_form', [
             'fields' => $this->fields->where('key_type', '<>', 'primary'),
             'model' => $this->classNameSnake,
         ])->render();
@@ -562,7 +584,7 @@ class WireCrudConsole extends Command
 
     public function generateFactory(): void
     {
-        $definitions = View::make('wirecrud::_helper_props', [
+        $definitions = View::make('wirecrud::string-builder._helper_props', [
             'pk' => $this->primaryKey,
             'fields' => $this->fields,
         ])->render();
@@ -599,7 +621,7 @@ class WireCrudConsole extends Command
 
     public function generateApi(): void
     {
-        $validate = View::make('wirecrud::_helper_validate_generator_api', [
+        $validate = View::make('wirecrud::string-builder._helper_validate_generator_api', [
             'field_validate' => $this->fields->where('key_type', '<>', 'primary'),
             'classNameLower' => $this->classNameCamel,
         ])->render();
